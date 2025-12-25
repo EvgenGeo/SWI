@@ -890,7 +890,7 @@ def get_main_menu_keyboard():
 
 def main():
     """Запуск бота"""
-    TOKEN = "8373312163:AAHVeju0m5Gp81kxEaQS0Giw_RgrFlxD8tI"
+    TOKEN = "token"
 
     if TOKEN == 'YOUR_TOKEN_HERE':
         print("❌ Установите TELEGRAM_BOT_TOKEN в переменные окружения!")
@@ -946,4 +946,5 @@ def main():
 
 
 if __name__ == '__main__':
+
     main()

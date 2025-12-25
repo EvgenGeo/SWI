@@ -1,0 +1,17 @@
+{% extends 'spectral_masw/base.html' %}
+{% block content %}
+<h1>Обработка {{ segy.name }}</h1>
+<form method="post">
+  {% csrf_token %}
+  Мин. частота: <input type="number" step="0.1" name="f_min"><br>
+  Макс. частота: <input type="number" step="0.1" name="f_max"><br>
+  Мин. скорость: <input type="number" step="0.1" name="v_min"><br>
+  Макс. скорость: <input type="number" step="0.1" name="v_max"><br>
+  <label>Data type:</label>
+  <select name="data_type">
+    <option value="2d">2D</option>
+    <option value="3d">3D</option>
+  </select>
+  <button type="submit">Запустить спектральный анализ</button>
+</form>
+{% endblock %}

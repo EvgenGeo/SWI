@@ -1,0 +1,49 @@
+{# spectral_masw/templates/spectral_masw/spectra_list.html #}
+{% extends "spectral_masw/base.html" %}
+
+{% block title %}Спектральные результаты{% endblock %}
+
+{% block content %}
+<h1>Спектральные результаты</h1>
+
+{% if results %}
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название результата</th>
+            <th>Сейсмограмма</th>
+            <th>Дата</th>
+            <th>Диапазон частот</th>
+            <th>Диапазон скоростей</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for r in results %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.name }}</td>
+            <td>{{ r.segy_file.name }}</td>
+            <td>{{ r.created_at|date:"Y-m-d H:i" }}</td>
+            <td>{{ r.extent_y_min|floatformat:1 }}–{{ r.extent_y_max|floatformat:1 }} Гц</td>
+            <td>{{ r.extent_x_min|floatformat:1 }}–{{ r.extent_x_max|floatformat:1 }} м/с</td>
+            <td>
+                <a href="{% url 'spectral_masw:spectra_plot' r.id %}">Отрисовать</a>
+                |
+                  <form method="post"
+                        action="{% url 'spectral_masw:spectra_delete' r.id %}"
+                        style="display:inline"
+                        onsubmit="return confirm('Удалить результат {{ r.name }}?');">
+                    {% csrf_token %}
+                    <button type="submit">Удалить</button>
+                  </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Пока нет сохранённых результатов спектрального анализа.</p>
+{% endif %}
+{% endblock %}

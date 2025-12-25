@@ -1,0 +1,32 @@
+{# spectral_masw/templates/spectral_masw/spectra_plot.html #}
+{% extends "spectral_masw/base.html" %}
+
+{% block title %}Отрисовка результата {{ result.id }}{% endblock %}
+
+{% block content %}
+<h1>Результат спектрального анализа</h1>
+
+<h2>{{ result.name }}</h2>
+<p><strong>Сейсмограмма:</strong> {{ result.segy_file.name }}</p>
+<p><strong>Модель:</strong> {{ result.neural_network_model }}</p>
+<p><strong>Дата:</strong> {{ result.created_at|date:"Y-m-d H:i" }}</p>
+<p><strong>Частоты:</strong> {{ result.extent_y_min|floatformat:1 }}–{{ result.extent_y_max|floatformat:1 }} Гц</p>
+<p><strong>Скорости:</strong> {{ result.extent_x_min|floatformat:1 }}–{{ result.extent_x_max|floatformat:1 }} м/с</p>
+
+<hr>
+
+<h2>Спектральное изображение с кривой</h2>
+
+{% if image_base64 %}
+    <img src="data:image/png;base64,{{ image_base64 }}"
+         alt="Спектральное изображение"
+         style="max-width: 100%; border: 1px solid #ccc;">
+{% else %}
+    <p>Изображение не сгенерировано.</p>
+{% endif %}
+
+<p style="margin-top: 20px;">
+    <a href="{% url 'spectral_masw:spectra_list' %}">← Назад к списку результатов</a>
+</p>
+{% endblock %}
+

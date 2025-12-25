@@ -1,0 +1,87 @@
+{# spectral_masw/templates/spectral_masw/segy_list.html #}
+{% extends "spectral_masw/base.html" %}
+
+{% block title %}Сейсмограммы{% endblock %}
+
+{% block content %}
+<h1>Сейсмограммы</h1>
+
+<h2>Загрузка новых SEGY-файлов</h2>
+<form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'spectral_masw:segy_upload' %}">
+    {% csrf_token %}
+    <input type="file" name="segy_files" multiple accept=".sgy,.segy,.SEG,.SEG-Y">
+    <button type="submit">Загрузить</button>
+</form>
+<div id="uploadStatus"></div>
+
+<hr>
+
+<h2>Список сейсмограмм в базе</h2>
+
+{% if segy_files %}
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Трасс</th>
+            <th>Отсчётов</th>
+            <th>Частота</th>
+            <th>Загружен</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for f in segy_files %}
+        <tr>
+            <td>{{ f.id }}</td>
+            <td>{{ f.name }}</td>
+            <td>{{ f.num_traces }}</td>
+            <td>{{ f.num_samples }}</td>
+            <td>{{ f.sample_rate }}</td>
+            <td>{{ f.upload_date|date:"Y-m-d H:i" }}</td>
+            <td>
+                <a href="{% url 'spectral_masw:segy_process' f.id %}">Обработать</a>
+                |
+              <form method="post"
+                    action="{% url 'spectral_masw:segy_delete' f.id %}"
+                    style="display:inline"
+                    onsubmit="return confirm('Удалить {{ f.name }}?');">
+                {% csrf_token %}
+                <button type="submit">Удалить</button>
+              </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Сейсмограмм пока нет. Загрузите одну или несколько.</p>
+{% endif %}
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const statusDiv = document.getElementById('uploadStatus');
+    statusDiv.textContent = 'Загрузка...';
+
+    try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (data.ok) {
+            statusDiv.textContent = 'Загружено файлов: ' + data.created.length;
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            statusDiv.textContent = 'Ошибка загрузки';
+        }
+    } catch (err) {
+        statusDiv.textContent = 'Ошибка: ' + err;
+    }
+});
+</script>
+{% endblock %}

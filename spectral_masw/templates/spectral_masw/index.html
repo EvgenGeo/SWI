@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>MASW портал</title>
+</head>
+<body>
+  <h1>MASW портал</h1>
+  <p>Перейти к работе с сейсмограммами и спектральным анализом.</p>
+
+  <a href="{% url 'spectral_masw:segy_list' %}">
+    <button>Перейти к сейсмограммам</button>
+  </a>
+
+  <a href="{% url 'spectral_masw:spectra_list' %}">
+    <button>Спектральные результаты</button>
+  </a>
+</body>
+</html>
